@@ -1,74 +1,123 @@
-console.log("hello player!");
-const choice = ["rock" ,"paper","scissor"];
-let userPoint =0;
-let cpuPoint = 0 ;
+const choice = ["🗿" , "📃" , "✂️"]
+let i=1;
+
+let userChoice=0;
+let cpuChoice=0;
+let userScore =0;
+let cpuScore =0;
+const userScoreDisplay = document.querySelector('#userScore')
+const cpuScoreDisplay = document.querySelector('#cpuScore')
+const roundNum = document.querySelector('#roundNum');
+const buttonSelect = document.querySelectorAll('.choice button');
+const userChoiceDisplay = document.querySelector('#userChoiceDisplay');
+const userChoiceDisplayCont = document.querySelector('#userChoiceDisplayCont')
+const cpuChoiceDisplayCont = document.querySelector('#cpuChoiceDisplayCont')
+const userStatus = document.querySelector('#userStatus');
+const cpuStatus = document.querySelector('#cpuStatus');
+const cpuChoiceDisplay = document.querySelector('#cpuChoiceDisplay');
+
+buttonSelect.forEach((button) => {
+    button.addEventListener('click', () =>{
+        userChoice= button.getAttribute('id');
+        userChoiceDisplay.textContent=userChoice;
+        userStatus.textContent="You CHOOSE: ";  
+    });
+});
 
 
-const checkMatch = (userChoicetemp) => {
-    let flag=0;
-    for(let i=0;i<choice.length;i++){
 
-    
-        
-        if(userChoicetemp === choice[i] ){
-            flag=1;
-        }
+let n = parseInt(prompt("Enter how many round you want to play:"));
+
+const userInput = ()=>{
+    userStatus.textContent="Press the button to attack: ";
+    cpuStatus.textContent="thinking...";
+
+}
+
+const cpuTurn = () =>{
+    cpuChoice = choice[Math.floor(Math.random()*2)];
+    cpuStatus.textContent="CPU CHOOSE: "; 
+    cpuChoiceDisplay.textContent=cpuChoice;
+    if(userChoice === "📃" && cpuChoice === "📃"
+       ||userChoice === "🗿" && cpuChoice === "🗿"
+       || userChoice === "✂️" && cpuChoice === "✂️"
+    ){
+
+        userScore++;
+        userScoreDisplay.textContent=userScore;
+        cpuScore++;
+        cpuScoreDisplay.textContent=cpuScore;
+
     }
-    if (flag ===0){
-        userChoicetemp = (prompt("Please type correctly!Try again.rock,paper,scissor: ")).trim().toLowerCase();
-        checkMatch(userChoicetemp);
+    else if(userChoice === "🗿" && cpuChoice === "✂️"
+            ||userChoice === "📃" && cpuChoice === "🗿"
+            ||userChoice === "✂️" && cpuChoice === "📃"
+    ){
+        userScore++;
+        userScoreDisplay.textContent=userScore;
     }
-    return userChoicetemp;
-};
-
-
-const game = (userChoice,cpuChoice) => {
-    if(userChoice === cpuChoice){
-        userPoint++;
-        cpuPoint++;
-        console.log(`You drew ${userChoice} and the cpu drew ${cpuChoice}`);
-        console.log("Draw");
-        console.log(`You: ${userPoint}-${cpuPoint} : CPU`)
-    }
-    else if(userChoice==="paper" &&cpuChoice==="rock" 
-            || userChoice==="scissor"&& cpuChoice==="paper"
-            || userChoice==="rock" && cpuChoice==="scissor"){
-                userPoint++;
-                console.log(`You drew ${userChoice} and the cpu drew ${cpuChoice}`);
-                console.log("You  Win");
-                console.log(`You: ${userPoint}-${cpuPoint} : CPU`)
-            }
     else{
-        cpuPoint++;
-        console.log(`You drew ${userChoice} and the cpu drew ${cpuChoice}`);
-        console.log("CPU Win");
-        console.log(`You : ${userPoint}-${cpuPoint} : CPU`)
+        cpuScore++;
+        cpuScoreDisplay.textContent=cpuScore;
     }
-};
-
-const nRounds = (n)=> {for(let i=1;i<n+1;i++){
-    console.log(`Round ${i}`);
     
-    let userChoice= (prompt("rock,paper,scissor: ")).trim().toLowerCase();
-    userChoice=checkMatch(userChoice);
 
-    const cpuChoice = choice[Math.floor(Math.random()*3)]; 
-    game(userChoice,cpuChoice);
+
+}
+
+const endGame =() => {
+    if (userScore<cpuScore){
+        alert("you lose");
     }
+    else if (cpuScore<userScore){
+        alert("you win");
+    }
+    else{
+        alert("draw");
+    }
+}
+
+
+const nround = () =>{
+    roundNum.textContent=i;
+    userInput();
+    let roundInterval = setInterval(() => {
+
+        
+        
+        setTimeout(()=>{
+
+            i++;
+            roundNum.textContent=i;
+            userChoiceDisplay.textContent="";
+            cpuChoiceDisplay.textContent="";
+            cpuStatus.textContent="thinking...";
+            userInput();
+        },1000);
+        if (i == n){
+            setTimeout(()=>{      
+                let iDis=i-1;
+                roundNum.textContent=iDis;     
+                userChoiceDisplayCont.remove();
+                cpuChoiceDisplayCont.remove();
+                endGame();
+                let answer=prompt('Play again?');
+                if((answer.trim()).toLowerCase() == "yes"){
+                    location.reload();
+                }
+
+            },1000)
+            clearInterval(roundInterval);
+
+        }
+        cpuTurn();
+
+    },5000);
+
+
+    
 };
-let n = parseInt(prompt("How many round do you wanna play: "));
-nRounds(n);
-if(userPoint == cpuPoint){
-    alert(`Battle of the luckiests.\nYou : ${userPoint}-${cpuPoint} : CPU`)
 
-}
-else if(userPoint> cpuPoint){
-    alert(`Congratulation! you won the ai with ${userPoint-cpuPoint} pts ahead.\nYou : ${userPoint}-${cpuPoint} : CPU`)
 
-}
-else{
-    alert(`Womp womp! you lose to a cpu  with ${cpuPoint-userPoint} pts below LMAOO.\nYou : ${userPoint}-${cpuPoint} : CPU`)
 
-}
- 
-
+nround();
